@@ -1,0 +1,22 @@
+{% extends "directory/base.html" %}
+{% block content %}
+<form enctype="multipart/form-data" id="render" action="" method="post">{% csrf_token %}
+<!--leave out the action, you do not need to go anywhere else-->
+    <table>
+        {{ emailformset }}
+        {{ phoneformset }}
+        {% if user.get_profile.international %}
+            {{ intphoneformset }}
+            {{ otheraddformset }}
+        {% endif %}
+        {{ usaddformset }}
+        {% if user.get_profile.type == "Current" %}
+            {{ campusaddformset }}
+        {% endif %}
+        {{ socialmediaformset }}
+        {{ jobformset }}
+        {{ tagformset }}
+    </table>
+    <input type="submit" value="Submit"/>
+</form>
+{% endblock %}

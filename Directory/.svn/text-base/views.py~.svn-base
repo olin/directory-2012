@@ -1,0 +1,22 @@
+from django.shortcuts import render_to_response, get_object_or_404
+from Directory.models import *
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template import RequestContext
+from django.forms.models import modelformset_factory
+
+
+def manage_users(request):
+ 
+    if request.method == "POST":
+        userform = UserForm(request.POST, request.FILES)
+        emailform = EmailForm(request.POST, request.FILES)
+        if userform.is_valid() and emailform.is_valid():
+            userform.save()
+            emailform.save()
+            return HttpResponseRedirect('') # Redirect after POST
+    else:
+        userform = UserForm()
+        emailform = EmailForm()
+    return render_to_response("manage_users.html",{"userform": userform, "emailform":emailform, "pictureform":pictureform, "usaddressform":usaddressform},context_instance=RequestContext(request))
+
+

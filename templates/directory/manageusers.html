@@ -1,0 +1,29 @@
+{% extends "directory/base.html" %}
+{% block content %}
+{% load thumbnail %}
+<h3> You are signed in as {{user.email}}</h3>
+<form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+    <table>
+        {% thumbnail item "200x200" crop="center" as im %}
+            <img id="thumb" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></img>
+        {% empty %}
+            <img src="/images/static.jpg"></img>
+        {% endthumbnail %}
+        {{ userform }}
+        {{ profileform }}
+        {{ emailform }}
+        {% if user.get_profile.international %}
+            {{ intphoneformset }}
+            {{ otheraddformset }}
+        {% endif %}
+        {{ usaddformset }}
+        {% if user.get_profile.type == "Current" %}
+            {{ campusaddformset }}
+        {% endif %}
+        {{ socialmediaformset }}
+        {{ jobformset }}
+        {{ tagform }}
+    </table>
+ <input type="submit" value="Submit"/>
+</form>
+{% endblock %}

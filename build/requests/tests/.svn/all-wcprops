@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/repo/courses/sp12/engr2510/sd/!svn/ver/1068/projects/olindirectory/OlinDirectory/build/requests/tests
+END
+test_requests.py
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/repo/courses/sp12/engr2510/sd/!svn/ver/1068/projects/olindirectory/OlinDirectory/build/requests/tests/test_requests.py
+END
+test_requests_ext.py
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/repo/courses/sp12/engr2510/sd/!svn/ver/1068/projects/olindirectory/OlinDirectory/build/requests/tests/test_requests_ext.py
+END
+test_requests_https.py
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repo/courses/sp12/engr2510/sd/!svn/ver/1068/projects/olindirectory/OlinDirectory/build/requests/tests/test_requests_https.py
+END
+test_requests_async.py
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/repo/courses/sp12/engr2510/sd/!svn/ver/1068/projects/olindirectory/OlinDirectory/build/requests/tests/test_requests_async.py
+END

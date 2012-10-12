@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit
+END
+admin.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/admin.py
+END
+managers.py
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/managers.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/__init__.py
+END
+utils.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/utils.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/models.py
+END
+forms.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/django-taggit/taggit/forms.py
+END

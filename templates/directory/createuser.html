@@ -1,0 +1,12 @@
+{% extends "directory/base.html" %}
+{% block content %}
+{% load thumbnail %}
+<h3> You are signed in as {{user.email}}</h3>
+<form enctype="multipart/form-data" action="" method="post">{% csrf_token %}
+    <table>
+        {{ userform }}
+        {{ profileform }}
+    </table>
+ <input type="submit" value="Submit"/>
+</form>
+{% endblock %}

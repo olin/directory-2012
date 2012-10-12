@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/OlinDirectory
+END
+wsgi.py
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/OlinDirectory/wsgi.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/OlinDirectory/__init__.py
+END
+settings.py
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/OlinDirectory/settings.py
+END
+urls.py
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/OlinDirectory/urls.py
+END

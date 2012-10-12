@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory
+END
+admin.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/admin.py
+END
+middleware.py
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/middleware.py
+END
+views.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/views.py
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/__init__.py
+END
+tests.py
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/tests.py
+END
+models.py
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/repo/courses/sp12/engr2510/sd/!svn/ver/1089/projects/olindirectory/OlinDirectory/build/lib/Directory/models.py
+END

@@ -1,0 +1,178 @@
+from django.db import models
+from django.forms import ModelForm
+from django.contrib.localflavor import us
+#from stdimage import StdImageField
+#from tagging.fields import TagField
+#from tagging.models import Tag
+#from tagging_autocomplete.models import TagAutocompleteField
+
+
+# Create your models here.
+USER_TYPES = (
+	('AL', 'Alumni'),
+	#don't give option for campus address
+	('CU', 'Current Students'),
+	('EX', 'Exchange Students'),
+	#don't give option for graduation year
+)
+
+class User(models.Model):
+	userid = models.IntegerField()
+	#automatically give them a userID
+	password = models.CharField(max_length=200)
+	#they input their password
+	type = models.CharField(max_length=2, choices=USER_TYPES)
+	#select whether they are alumni, current student, or exchange student
+	year = models.IntegerField()
+	# graduation year
+	first = models.CharField(max_length=200)
+	#first name
+	last = models.CharField(max_length=200)
+	#last name
+	middle = models.CharField(max_length=200)
+	#middle name
+	nickname = models.CharField(max_length=200)
+	#nickname
+	maiden = models.CharField(max_length=200)
+	#maiden name
+	us = models.BooleanField()
+	#select if they live in the US or not
+
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+
+
+class Email(models.Model):
+	user = models.ForeignKey(User)
+	email = EmailField()
+	#like charfield, but makes sure it's a valid email address
+
+class EmailForm(ModelForm):
+    class Meta:
+        model = Email
+
+
+class Picture(models.Model):
+# svn checkout http://django-stdimage.googlecode.com/svn/trunk/stdimage
+	user = models.ForeignKey(User)
+	picture = StdImageField(upload_to="images/users/", size=(200, 400), thumbnail_size=(100,100))#size is full sized image resized, thumbnail_size creates a smaller thumbnail
+	# http://code.google.com/p/django-stdimage/ for documentation on how to do stuff with the image
+
+class PictreForm(ModelForm):
+    class Meta:
+        model = Picture
+
+
+class Phone(models.Model):
+#use either number of nonusnumber depending on whether they selected that they're living in the US
+	user = models.ForeignKey(User)
+	PHONE_CHOICES = (
+	#different types of phone numbers they can add
+		('Cell', 'Cell Phone'),
+		('Home', 'Home Phone'),
+		('Work', 'Work Phone'),
+		('Other', 'Other Phone'),
+	)
+	number = us.models.PhoneNumberField()
+	#add in phone number (has to be US number)
+	nonusnumber = models.IntegerField()
+	#for people not in US
+	type = models.CharField(max_length=5, choices=PHONE_CHOICES)
+	#choose which type of phone number it is
+
+class PhoneForm(ModelForm):
+    class Meta:
+        model = Phone
+
+
+class USAddress(models.Model):
+#fields to enter US address - lets them select state, makes sure it's a valid zip code
+	user = models.ForeignKey(User)
+	state = us.models.USPostalCodeField()
+	city = models.CharField(max_length=200)
+	zipcode = us.forms.USZipCodeField()
+	street1 = models.CharField(max_length=200)
+	street2 = models.CharField(max_length=200)
+
+class USAddressForm(ModelForm):
+    class Meta:
+        model = USAddress
+
+
+class OtherAddress(models.Model):
+#fields to enter foreign address - 4 lines of charfields
+	user = models.ForeignKey(User)
+	line1 = models.CharField(max_length=200)
+	line2 = models.CharField(max_length=200)
+	line3 = models.CharField(max_length=200)
+	line4 = models.CharField(max_length=200)
+
+class OtherAddress(ModelForm):
+    class Meta:
+        model = OtherAddress
+
+
+class CampusAddress(models.Model):
+#campus address (current / exchange only?) - not required field (some students live off campus)
+	user = models.ForeignKey(User)
+	mailbox = models.IntegerField()
+	#campus mailbox
+	DORM_CHOICES = (
+	#dorm options
+		('EH', 'East Hall'),
+		('WH', 'West Hall'),
+	)
+	dorm = models.CharField(max_length=2, choices=DORM_CHOICES)
+	#choose which dorm they live in
+	roomnumber = models.IntegerField()
+	#room number
+
+class CampusAddressForm(ModelForm):
+    class Meta:
+        model = CampusAddress
+
+
+class SocialMedia(models.Model):
+	user = models.ForeignKey(User)
+	SM_CHOICES = (
+	#different social media sites
+		('Skype', 'Skype'),
+		('AIM', 'AIM'),
+		('LI', 'LinkedIn'),
+		('FB', 'Facebook'),
+		('TW', 'Twitter'),
+	)
+	account = models.CharField(max_length=200)
+	#account username
+	service = models.CharField(max_length=5, choices=SM_CHOICES)
+	#choose which service it's for
+
+class SocialMediaForm(ModelForm):
+    class Meta:
+        model = SocialMedia
+
+
+class Jobs(models.Model):
+	user = models.ForeignKey(User)
+	job = models.CharField(max_length=200)
+	#name of job
+	jobdescription = models.TextField()
+	#place to put description of the job
+
+class JobsForm(ModelForm):
+    class Meta:
+        model = Jobs
+
+
+class Tags(models.Model):
+#adding tagging - http://code.google.com/p/django-tagging/
+	user = models.ForeignKey(User)
+	tags = TagAutoCompleteField()
+	#http://code.google.com/p/django-tagging-autocomplete/wiki/ReadMe
+	def get_tags(self):
+	#function to get the tags for an object
+		return Tag.objects.get_for_object(self)
+
+#do more research before you do Tags forms
+

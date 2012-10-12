@@ -1,0 +1,6 @@
+{% extends "directory/base.html" %}
+<form action="/search/results/" method="post">
+{% csrf_token %}
+<input type="textfield" name="q" id="request" />
+<input type="submit" value="go" />
+</form>

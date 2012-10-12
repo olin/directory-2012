@@ -1,0 +1,243 @@
+from django.shortcuts import render_to_response, get_object_or_404
+from Directory.models import *
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template import RequestContext
+from django.forms.models import modelformset_factory
+from django.contrib.auth import logout
+
+def home(request):
+    return render_to_response('directory/base.html',
+ context_instance=RequestContext(request))
+
+def logout_req(request):
+    logout(request)
+    return HttpResponseRedirect("/")
+
+def contacts(request):
+    profiles = UserProfile.objects.all().exclude(
+        nickname = "admin"
+    )
+    return render_to_response('directory/addresscard.html',
+ {"profiles":profiles}, context_instance=RequestContext(request))
+
+def create_user(request):
+    if request.method == 'POST':
+        userform = UserForm(request.POST, instance=request.user)
+        profileform = UserProfileForm(request.POST, request.FILES)
+        if userform.is_valid() and profileform.is_valid():
+            userform.save()
+            """
+            NOTE: since the user has just been created the profilefrom
+            needs to be attached to this new user
+            """
+            pf = profileform.save(commit= False)
+            #don't commit
+            pf.user = request.user
+            #define the user
+            pf.save()
+            #now save
+            return HttpResponseRedirect("/second")
+    else:
+        userform = UserForm()
+        profileform = UserProfileForm()
+    return render_to_response("directory/createuser.html",
+    {"userform":userform, "profileform":profileform},
+     context_instance=RequestContext(request))
+
+def second(request):
+    """
+    This is the second half of the registration process.
+    These are all formsets to allow for multiple entries.
+    """
+    userprofile = request.user.get_profile()
+    EmailFormSet = modelformset_factory(addEmail, exclude=('user'), max_num=1)
+    PhoneFormSet = modelformset_factory(Phone, exclude=('user'), max_num=1)
+    InternationalPhoneFormSet = modelformset_factory(InternationalPhone, exclude=('user'), max_num=1)
+    USAddressFormSet = modelformset_factory(USAddress, exclude=('user'), max_num=1)
+    OtherAddressFormSet = modelformset_factory(OtherAddress, exclude=('user'), max_num=1)
+    CampusAddressFormSet = modelformset_factory(CampusAddress, exclude=('user'), max_num=1)
+    SocialMediaFormSet = modelformset_factory(SocialMedia, exclude=('user'), max_num=1)
+    JobFormSet = modelformset_factory(Job, exclude=('user'), max_num=1)
+    TagFormSet = modelformset_factory(Tags, exclude=('user'), max_num=1)
+    if request.method == "POST":
+        tagformset = TagFormSet(request.POST, request.FILES,)
+        emailformset = EmailFormSet(request.POST, request.FILES,)
+        phoneformset = PhoneFormSet(request.POST, request.FILES,)
+        usaddformset = USAddressFormSet(request.POST, request.FILES,)
+        intphoneformset = InternationalPhoneFormSet(request.POST, request.FILES,)
+        otheraddformset = OtherAddressFormSet(request.POST, request.FILES,)
+        campusaddformset = CampusAddressFormSet(request.POST, request.FILES,)
+        socialmediaformset = SocialMediaFormSet(request.POST, request.FILES,)
+        jobformset = JobFormSet(request.POST, request.FILES,)
+
+        if emailformset.is_valid() and phoneformset.is_valid():
+            for form in emailformset.forms:
+                e = form.save(commit=False)
+                e.user = request.user
+                e.save()
+            for num in phoneformset.forms:
+                p = num.save(commit=False)
+                p.user = request.user
+                p.save()
+            for usadd in usaddformset.forms:
+                u = usadd.save(commit=False)
+                u.user = request.user
+                u.save()
+            if request.user.get_profile().international:
+                for intnum in intphoneformset.forms:
+                    i = intnum.save(commit=False)
+                    i.user = request.user
+                    i.save()
+                for oadd in otheraddformset.forms:
+                    o = oadd.save(commit=False)
+                    o.user = request.user
+                    o.save()
+            if request.user.get_profile().type == "Current":
+                for campus in campusaddformset.forms:
+                    c = campus.save(commit=False)
+                    c.user = request.user
+                    c.save()
+            for soc in socialmediaformset.forms:
+                s = soc.save(commit=False)
+                s.user = request.user
+                s.save()
+            for job in jobformset.forms:
+                j = job.save(commit=False)
+                j.user = request.user
+                j.save()
+            for tag in tagformset.forms:
+                obj = tag.save(commit=False)
+                obj.user = request.user
+                obj.save()
+                tag.save_m2m()
+            return HttpResponseRedirect('/contacts') # Redirect after POST
+    else:
+       emailformset = EmailFormSet(queryset=request.user.addemail_set.all())
+       phoneformset = PhoneFormSet(queryset=request.user.phone_set.all())
+       usaddformset = USAddressFormSet(queryset=request.user.usaddress_set.all())
+       intphoneformset = InternationalPhoneFormSet(queryset=request.user.internationalphone_set.all())
+       otheraddformset = OtherAddressFormSet(queryset=request.user.otheraddress_set.all())
+       campusaddformset = CampusAddressFormSet(queryset=request.user.campusaddress_set.all())
+       socialmediaformset = SocialMediaFormSet(queryset=request.user.socialmedia_set.all())
+       jobformset = JobFormSet(queryset=request.user.job_set.all())
+       tagformset = TagFormSet(queryset=request.user.tags_set.all())
+
+    return render_to_response("directory/secondmanage.html",
+    {"emailformset":emailformset,
+    "phoneformset":phoneformset,
+    "usaddformset":usaddformset,
+    "intphoneformset":intphoneformset,
+    "otheraddformset":otheraddformset,
+    "campusaddformset":campusaddformset,
+    "socialmediaformset":socialmediaformset,
+    "jobformset":jobformset,
+    "tagformset":tagformset,
+    },
+     context_instance=RequestContext(request))
+
+def manage_users(request):
+    filler = {"first": request.user.first_name,
+    "last" : request.user.last_name,}
+    profileobj = request.user.get_profile()
+    profilefill = {"type": profileobj.type,
+    "year" : profileobj.year,"middle" : profileobj.middle,
+    "nickname" : profileobj.nickname,"maiden" : profileobj.maiden,
+    "international" : profileobj.international,
+    "picture" : profileobj.picture,}
+    EmailFormSet = modelformset_factory(addEmail, exclude=('user'), max_num=1)
+    PhoneFormSet = modelformset_factory(Phone, exclude=('user'), max_num=1)
+    InternationalPhoneFormSet = modelformset_factory(InternationalPhone, exclude=('user'), max_num=1)
+    USAddressFormSet = modelformset_factory(USAddress, exclude=('user'), max_num=1)
+    OtherAddressFormSet = modelformset_factory(OtherAddress, exclude=('user'), max_num=1)
+    CampusAddressFormSet = modelformset_factory(CampusAddress, exclude=('user'), max_num=1)
+    SocialMediaFormSet = modelformset_factory(SocialMedia, exclude=('user'), max_num=1)
+    JobFormSet = modelformset_factory(Job, exclude=('user'), max_num=1)
+    TagFormSet = modelformset_factory(Tags, exclude=('user'), max_num=1)
+    if request.method == 'POST':
+        userform = UserForm(request.POST, instance=request.user)
+        profileform = UserProfileForm(request.POST, request.FILES, instance=profileobj)
+        emailform = EmailFormSet(request.POST, request.FILES,)
+        phoneformset = PhoneFormSet(request.POST, request.FILES,)
+        usaddformset = USAddressFormSet(request.POST, request.FILES,)
+        if request.user.get_profile().international:
+            intphoneformset = InternationalPhoneFormSet(request.POST, request.FILES,)
+            otheraddformset = OtherAddressFormSet(request.POST, request.FILES,)
+        if request.user.get_profile().type == "Current":
+            campusaddformset = CampusAddressFormSet(request.POST, request.FILES,)
+        socialmediaformset = SocialMediaFormSet(request.POST, request.FILES,)
+        jobformset = JobFormSet(request.POST, request.FILES,)
+        tagform = TagFormSet(request.POST, request.FILES,)
+        if userform.is_valid() and profileform.is_valid() and tagform.is_valid():
+            userform.save()
+            pf = profileform.save(commit= False)
+            #don't commit
+            pf.user = request.user
+            #define the user
+            pf.save()
+            emailform.save()
+            phoneformset.save()
+            usaddformset.save()
+            if request.user.get_profile().international:
+                intphoneformset.save()
+                otheraddformset.save()
+            if request.user.get_profile().type == "Current":
+                campusaddformset.save()
+            socialmediaformset.save()
+            jobformset.save()
+            tagform.save()
+            return HttpResponseRedirect("/contacts")
+    else:
+        userform = UserForm(initial=filler)
+        profileform = UserProfileForm(initial=profilefill)
+        emailform = EmailFormSet(queryset = request.user.addemail_set.all())
+        phoneformset = PhoneFormSet(queryset=request.user.phone_set.all())
+        usaddformset = USAddressFormSet(queryset=request.user.usaddress_set.all())
+        intphoneformset = InternationalPhoneFormSet(queryset=request.user.internationalphone_set.all())
+        otheraddformset = OtherAddressFormSet(queryset=request.user.otheraddress_set.all())
+        campusaddformset = CampusAddressFormSet(queryset=request.user.campusaddress_set.all())
+        socialmediaformset = SocialMediaFormSet(queryset=request.user.socialmedia_set.all())
+        jobformset = JobFormSet(queryset=request.user.job_set.all())
+        tagform = TagFormSet(queryset = request.user.tags_set.all())
+
+    return render_to_response("directory/manageusers.html",
+    {"userform":userform,
+    "profileform":profileform,
+    "emailform":emailform,
+    "tagform":tagform,
+    "item":profileobj.picture,
+    "phoneformset":phoneformset,
+    "usaddformset":usaddformset,
+    "intphoneformset":intphoneformset,
+    "otheraddformset":otheraddformset,
+    "campusaddformset":campusaddformset,
+    "socialmediaformset":socialmediaformset,
+    "jobformset":jobformset,},
+     context_instance=RequestContext(request))
+
+"""
+Search stuff
+From http://julienphalip.com/post/2825034077/adding-search-to-a-django-site-in-a-snap
+"""
+
+def search(request):
+    query_string = ''
+    found_entries = None
+    if ('q' in request.POST) and request.POST['q'].strip(): #pulls search term from form that sends it
+        query_string = request.POST['q']
+
+	#this is where we would split stuff up depending on whether they used keywords
+        entry_query = get_query(query_string, ['first_name','last_name']) #fields to search (from user)
+        entry_query2 = get_query(query_string, ['type','year','middle','nickname','maiden','international',]) #fields to search from UserProfile
+
+	#it also might be worthwhile to implement sorting by multiple different columns....
+        found_entriesa = User.objects.filter(entry_query).order_by('first_name')
+
+        found_entries2 = UserProfile.objects.filter(entry_query2).order_by('year') #how to order it
+        found_entries = list(found_entriesa) + list(found_entries2)
+        #forcing list makes it memory-intensive, according to django documentation. Might be a performance concern once the site gets large.
+    if found_entries == None:
+        found_entries = request
+
+    return render_to_response('search/search_results.html',
+                          { 'query_string': query_string, 'found_entries': found_entries },
+                          context_instance=RequestContext(request))

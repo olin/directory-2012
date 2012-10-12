@@ -1,0 +1,30 @@
+{% extends "directory/base.html" %}
+{% block content %}
+{% load thumbnail %}
+{% for p in profiles %}
+<div class="addresscard" id = "{{p.user.first_name}}{{p.user.last_name}}">
+    <div class="profilepic">
+        {% thumbnail p.picture "100x100" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+        {% empty %}
+            <p>No image</p>
+        {% endthumbnail %}
+    </div>
+    <div class="contactinfo">
+    <h2> {{p.user.first_name}} {{p.user.last_name}}</h3>
+    <a href="mailto:{{p.user.email}}"> E-mail</a>
+    <div class="email">
+        {%for e in p.email_set.all%}
+        <a href="mailto:{{e}}">Send Me an E-mail!</a>
+        {%endfor%}
+    </div>
+    <div class="phone">
+        {%for p in p.phone_set.all%}
+        {{p.numtype}} : {{p.num}}
+        {%endfor%}
+    </div>
+    </div>
+</div>
+{%endfor%}
+{% endblock %}
+ 

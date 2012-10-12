@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+    <script src="https://browserid.org/include.js" type="text/javascript"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script> 
+    <link type="text/css" href="css/themename/jquery-ui-1.8.20.custom.css" rel="Stylesheet" />	
+    <script type="text/javascript" src="js/jquery-ui-1.8.20.custom.min.js"></script>
+    <script type="text/javascript" src="/static/taggit_autocomplete_modified/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/taggit_autocomplete_modified/jquery.autocomplete.js"></script>
+    <link href="/static/taggit_autocomplete_modified/jquery.autocomplete.css" type="text/css" media="all" rel="stylesheet" />
+    {% block head %}{% endblock %}
+    <script type="text/javascript">
+        $(document).ready(function() {
+              $('#browserid').bind('click', function(e) {
+                    e.preventDefault();
+                    navigator.id.getVerifiedEmail(function(assertion) {
+                    if (assertion) {
+                        var $e = $('#id_assertion');
+                        $e.val(assertion.toString());
+                        $e.parent().submit();
+                    }
+                });
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <div>
+        {% if not user.is_authenticated %}
+           <a id="browserid" href="#">Sign In</a>
+           <form method="POST" action="{% url browserid_verify %}">
+               {% csrf_token %}
+               {{ browserid_form.as_p }}
+           </form>
+        {% endif %}
+    </div>
+    {% if user.is_authenticated %}
+    {% load taggit_extras %}
+    <div id="topnav">
+        <div id="title"><a href="/">the Olin Directory</a></div>
+        <div class="righthand"><a href="/logout">Log Out</a></div>
+        <div class="righthand"> {{ user.email }} </div>
+    </div>
+
+        {% if forvar %}
+        {% get_tagcloud as tags for forvar %}
+        {% else %}
+        {% get_tagcloud as tags %}
+        {% endif %}
+
+        <div id="shell">
+            <div id="wordcloud">
+                <a href="/"> <b>Home</b> </a><br />
+                <a href="/search"> <b>Search</b></a><br />
+                <a href="/manageusers"> <b>Settings</b> </a><br />
+                <b>Tags:</b> <br />
+                <div id="centering">
+                {% for tag in tags %}
+                <a class="cloudtag" href="#" name={{tag}} size={{tag.weight|floatformat:0}}>{{tag}}</a> <br />
+                {% endfor %}
+                </div>
+            </div>
+            <div id="content">
+                {% block content %} 
+                <div id="starter">
+                    Hello {{user.first_name}}! <br /><br />
+                    <a href="/search">Search for Oliners</a> or
+                    <a href="/manageusers">Change your profile</a>
+                </div>              
+                {% endblock %}
+            </div>
+        </div>
+        {% csrf_token %}
+    {% endif %}
+<script type="text/javascript">
+var click_handler = function () {
+            $.post( "/search/", {csrfmiddlewaretoken:$("input[name=csrfmiddlewaretoken]").attr("value"), q: $(this).attr("name"),}, 
+            function(data) 
+                {$("body").html(data)}
+            );
+        };
+$(document).ready(function() {
+    $(".cloudtag").click(click_handler);
+});
+    
+</script>
+  </body>
+</html>

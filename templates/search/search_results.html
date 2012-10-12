@@ -1,0 +1,30 @@
+<form action="/search/results/" method="post">
+{% csrf_token %}
+<input type="textfield" name="q" id="id_q" />
+<input type="submit" value="go" />
+</form>
+
+{% for entry in found_entries %}
+{% if entry.username = null %}
+<div class="addresscard" id="{{entry.user.first_name}}{{entry.user.last_name}}"><h2>{{entry.user.first_name}}</h2>
+<h3>{{entry.user.last_name}}</h3>
+<a href="mailto:{{entry.user.email}}"> E-mail</a>
+<div class="email">
+{%for e in entry.email_set.all %}
+<a href="mailto:{{e}}">Send me an email!</a>
+{%endfor%}
+</div>
+</div>
+{% else %}
+<div class="addresscard" id="{{entry.first_name}}{{entry.last_name}}">
+<h2>{{entry.first_name}}</h2>
+<h3>{{entry.last_name}}</h3>
+<a href="mailto:{{entry.email}}">E-mail</a>
+<div class="email">
+{% for e in entry.get_profile.email_set.all %}
+<a href="mailto:{{e}}">Send me an email!</a>
+{%endfor%}
+</div>
+</div>
+{% endif %}
+{% endfor %}
